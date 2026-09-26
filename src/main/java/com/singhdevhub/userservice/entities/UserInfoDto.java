@@ -16,7 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true) // ignores for those fields which don't have any value
 public class UserInfoDto
 {
 
@@ -43,14 +43,27 @@ public class UserInfoDto
     @JsonProperty("profile_pic")
     private String profilePic;
 
+    // ===== TASK 3: map this DTO to the database entity =====
+    // UserInfoDto = the shape of data arriving from Kafka / an HTTP body (a "transfer" object).
+    // UserInfo    = the shape stored in the DB (the @Entity class).
+    // They carry almost the same fields; this method copies this DTO's values into a new
+    // UserInfo so the repository can save it. UserInfo has Lombok's @Builder, so the pattern is:
+    //   UserInfo.builder().userId(userId).firstName(firstName). ... .build();
+    // Fields to copy: userId, firstName, lastName, email, phoneNumber, profilePic.
     public UserInfo transformToUserInfo() {
-        return UserInfo.builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .userId(userId)
-                .email(email)
-                .profilePic(profilePic)
-                .phoneNumber(phoneNumber).build();
+
+        //very important and oimple to know:
+        //you could directly use modelmapper instead of this method like:
+        
+        //what it does: Java object → another Java object
+
+        //ModelMapper modelMapper = new ModelMapper();
+        //UserInfo entity = modelMapper.map(userInfoDto, UserInfo.class);
+
+
+        return UserInfo.builder().userId(userId).firstName(firstName).lastName(lastName).email(email).phoneNumber(phoneNumber).profilePic(profilePic).build();
+        // TODO(TASK 3): build and return a UserInfo from this DTO's fields
+        // return null;
     }
 
 }
